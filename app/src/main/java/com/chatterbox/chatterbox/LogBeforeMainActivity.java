@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,11 +18,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LogBeforeMainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button buttonLogin;
+    private TextView buttonLogin;
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private Button buttonsignup;
-    TextView textView;
+    private TextView buttonsignup;
 
     private ProgressDialog progressDialog;
 
@@ -39,19 +37,18 @@ public class LogBeforeMainActivity extends AppCompatActivity implements View.OnC
             finish();
             startActivity(new Intent(this, MainActivity.class));
         }
-
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_log_before_main);
 
+
         progressDialog = new ProgressDialog(this);
-        buttonLogin = (Button) findViewById(R.id.btn_login);
+        buttonLogin = (TextView) findViewById(R.id.btn_login);
         editTextEmail = (EditText) findViewById(R.id.input_email);
         editTextPassword = (EditText) findViewById(R.id.input_password);
-        buttonsignup = (Button) findViewById(R.id.btn_signup);
-        textView = (TextView) findViewById(R.id.link_register);
+        buttonsignup = (TextView) findViewById(R.id.btn_signup);
 
         buttonLogin.setOnClickListener(this);
         buttonsignup.setOnClickListener(this);
-        textView.setOnClickListener(this);
 
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.password_reset_dialog);
@@ -127,7 +124,7 @@ public class LogBeforeMainActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View view){
-        if(view == buttonsignup || view == textView){
+        if(view == buttonsignup){
             //intent to start register activity
             finish();
             startActivity(new Intent(this, RegBeforeMainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));

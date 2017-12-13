@@ -26,8 +26,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class RegBeforeMainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button buttonCreateAccount;
-    private Button buttonLinkLogin;
+    private TextView buttonCreateAccount;
+    private TextView buttonLinkLogin;
     private EditText editTextName;
     private EditText editTextEmail;
     private EditText editTextPassword;
@@ -42,6 +42,7 @@ public class RegBeforeMainActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_reg_before_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -55,11 +56,11 @@ public class RegBeforeMainActivity extends AppCompatActivity implements View.OnC
             startActivity(new Intent(this, MainActivity.class));
         }
 
-        buttonCreateAccount = (Button) findViewById(R.id.btn_signup);
+        buttonCreateAccount = (TextView) findViewById(R.id.btn_signup);
         editTextName = (EditText) findViewById(R.id.input_name);
         editTextEmail = (EditText) findViewById(R.id.input_email);
         editTextPassword = (EditText) findViewById(R.id.input_password);
-        buttonLinkLogin = (Button) findViewById(R.id.link_login);
+        buttonLinkLogin = (TextView) findViewById(R.id.link_login);
         editTextPhno = (EditText) findViewById(R.id.input_phno);
         textLoginLink = (TextView) findViewById(R.id.login_link_text);
 
@@ -113,7 +114,7 @@ public class RegBeforeMainActivity extends AppCompatActivity implements View.OnC
                             final users newUser = new users(name,email,uid,password,Phno);
 
                             rootRef.child("users").child(uid).setValue(newUser);
-                            rootRef.child("registered").push().setValue(Phno);
+                            rootRef.child("registered").child(uid).setValue(Phno);
 
                             progressDialog.dismiss();
                             Toast.makeText(RegBeforeMainActivity.this,"Successfully Registered", Toast.LENGTH_SHORT).show();

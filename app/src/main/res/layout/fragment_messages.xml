@@ -1,13 +1,76 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.chatterbox.chatterbox.messagesFragment">
+    android:background="#f5f5f5"
+    android:clickable="true">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/MainLayout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"/>
+
+    <ImageView
+        android:id="@+id/sendComment"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@drawable/circle"
+        android:tint="@color/colorPrimaryDark"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+    <ImageView
+        android:id="@+id/circle"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="12.5dp"
+        android:src="@drawable/send"
+        android:tint="#ffffff"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+    <RelativeLayout
+        android:id="@+id/lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:minHeight="45dp"
+        android:background="@drawable/rounded_rectangle"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="5dp"
+        android:elevation="2dp">
+
+        <EditText
+            android:id="@+id/commentText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="45dp"
+            android:padding="2.5dp"
+            android:maxHeight="150dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:hint="Type a message"
+            android:textSize="16sp"
+            android:background="@android:color/transparent"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="messages" />
+        android:id="@+id/recyclerViewForComments"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_above="@+id/lay"
+        android:layout_alignParentTop="true"
+        android:overScrollMode="never"/>
 
-</FrameLayout>
+</RelativeLayout>
