@@ -3,6 +3,18 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+    }
+
     defaultConfig {
         applicationId "com.chatterbox.chatterbox"
         minSdkVersion 19
@@ -28,6 +40,8 @@ dependencies {
     compile 'com.google.firebase:firebase-database:11.0.4'
     compile 'com.google.firebase:firebase-messaging:11.0.4'
     compile 'com.google.firebase:firebase-storage:11.0.4'
+    compile 'com.firebase:firebase-client-android:2.5.2'
+    compile 'com.android.support:design:25.1.1'
     compile 'com.google.firebase:firebase-auth:11.0.4'
     testCompile 'junit:junit:4.12'
 }
