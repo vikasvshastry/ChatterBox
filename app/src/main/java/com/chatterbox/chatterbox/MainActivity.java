@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -29,23 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        displayView(0);
+        displayView();
 
     }
 
-    private void displayView(int position) {
-        String title = getString(R.string.app_name);
-        fragno=position;
-        switch (position) {
-            case 0:
-                fragment = new chatsFragment();
-                title = "ChatterBox";
-                break;
-            case 1:
-                fragment = new messagesFragment();
-                title = "messages";
-                break;
-        }
+    private void displayView() {
+
+        fragment = new chatsFragment();
 
         if (fragment != null) {
             String backStateName =  fragment.getClass().getName();
@@ -61,7 +52,16 @@ public class MainActivity extends AppCompatActivity {
                 ft.commit();
             }
             // set the toolbar title
-            getSupportActionBar().setTitle(title);
+            //getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
+        } else {
+            super.onBackPressed();
         }
     }
 
