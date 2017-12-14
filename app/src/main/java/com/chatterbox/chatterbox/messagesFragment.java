@@ -15,7 +15,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class messagesFragment extends Fragment {
 
-    String chatId;
+    String chatId,name;
     RecyclerView recyclerView;
     LinearLayoutManager mLayoutManager;
 
@@ -36,6 +36,7 @@ public class messagesFragment extends Fragment {
 
         Bundle b = getArguments();
         chatId = b.getString("chatId");
+        name = b.getString("name");
 
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerViewForComments);
         mLayoutManager = new LinearLayoutManager(getActivity());

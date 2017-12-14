@@ -31,15 +31,15 @@ public class LogBeforeMainActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-
+        setContentView(R.layout.activity_log_before_main);
         if(firebaseAuth.getCurrentUser() != null){
             //Start main activity
             finish();
             startActivity(new Intent(this, MainActivity.class));
         }
-        getSupportActionBar().hide();
-        setContentView(R.layout.activity_log_before_main);
-
+        try {
+            getSupportActionBar().hide();
+        }catch (Exception e){}
 
         progressDialog = new ProgressDialog(this);
         buttonLogin = (TextView) findViewById(R.id.btn_login);

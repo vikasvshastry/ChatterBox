@@ -42,8 +42,10 @@ public class RegBeforeMainActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
         setContentView(R.layout.activity_reg_before_main);
+        try {
+            getSupportActionBar().hide();
+        }catch (Exception e){}
 
         firebaseAuth = FirebaseAuth.getInstance();
 
