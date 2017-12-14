@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_height="100dp"
+    android:layout_width="275dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:id="@+id/addNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:background="@color/colorPrimary"
+        android:fontFamily="sans-serif"
+        android:layout_alignParentTop="true"
+        android:text="Add number"/>
+
+    <Button
+        android:id="@+id/group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:background="@color/colorPrimaryDark"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="sans-serif"
+        android:text="Create Group"
+        android:layout_below="@id/addNumber"/>
+
+</RelativeLayout>
