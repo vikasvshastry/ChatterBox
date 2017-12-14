@@ -1,5 +1,6 @@
 package com.chatterbox.chatterbox;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -27,7 +31,7 @@ import java.util.Date;
 
 public class messagesFragment extends Fragment {
 
-    String chatId,name,uid;
+    String chatId,name,uid,phno,type;
     RecyclerView recyclerView;
     LinearLayoutManager mLayoutManager;
     private Firebase rootRef = new Firebase("https://chatterbox-b475f.firebaseio.com/");
@@ -36,6 +40,7 @@ public class messagesFragment extends Fragment {
 
     public messagesFragment() {
         // Required empty public constructor
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -53,7 +58,13 @@ public class messagesFragment extends Fragment {
         Bundle b = getArguments();
         chatId = b.getString("chatId");
         name = b.getString("name");
+        phno = b.getString("phno");
+        type = b.getString("type");
 
+        if(name.isEmpty()) {
+            name = phno;
+            setHasOptionsMenu(true);
+        }
         ((MainActivity) getActivity()).setActionBarTitle(name);
 
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerViewForComments);
@@ -194,4 +205,27 @@ public class messagesFragment extends Fragment {
         ((MainActivity) getActivity()).setActionBarTitle("ChatterBox");
         super.onDetach();
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if(type.equals("group"))
+        inflater.inflate(R.menu.fragment_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_part:
+
+                break;
+            case R.id.action_view_part:
+
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
 }

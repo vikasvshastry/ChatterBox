@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.client.DataSnapshot;
@@ -34,9 +35,12 @@ public class chatsFragment extends Fragment {
     RecyclerView recyclerView;
     LinearLayoutManager mLayoutManager;
     private FirebaseAuth firebaseAuth;
-    String uid;
+    String uid,userName;
     private Firebase rootRef = new Firebase("https://chatterbox-b475f.firebaseio.com/");
     private final int REQUEST_CODE=99;
+    FirebaseRecyclerAdapter<chatHead, ChatsViewHolder> adapter;
+    Boolean isGroup;
+    String groupName;
 
     public chatsFragment() {
         // Required empty public constructor
@@ -46,7 +50,6 @@ public class chatsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         uid = firebaseAuth.getInstance().getCurrentUser().getUid();
-
     }
 
     @Override
@@ -55,14 +58,12 @@ public class chatsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_chats, container, false);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
-
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerViewForChats);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        final FirebaseRecyclerAdapter<chatHead, ChatsViewHolder> adapter = new FirebaseRecyclerAdapter<chatHead,ChatsViewHolder>(
+        adapter = new FirebaseRecyclerAdapter<chatHead,ChatsViewHolder>(
                 chatHead.class,
                 R.layout.chat_head_layout,
                 chatsFragment.ChatsViewHolder.class,
@@ -79,6 +80,8 @@ public class chatsFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putString("chatId",c.getChatId());
                         bundle.putString("name",c.getName());
+                        bundle.putString("phno",c.getPhno());
+                        bundle.putString("type",c.getType());
 
                         Fragment fragment = new messagesFragment();
                         fragment.setArguments(bundle);
@@ -103,6 +106,7 @@ public class chatsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isGroup=false;
                 dialog.show();
                 person.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -116,6 +120,23 @@ public class chatsFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        Toast.makeText(getActivity(), "Please choose one number to start with", Toast.LENGTH_SHORT).show();
+                        final Dialog dialog1 = new Dialog(getActivity());
+                        dialog1.setContentView(R.layout.create_group_dialog);
+                        final EditText groupname = (EditText)dialog1.findViewById(R.id.groupname);
+                        final Button select = (Button)dialog1.findViewById(R.id.select);
+                        dialog1.show();
+                        select.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
+                                isGroup=true;
+                                groupName = groupname.getText().toString().trim();
+                                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                                startActivityForResult(intent, REQUEST_CODE);
+                            }
+                        });
+
                     }
                 });
             }
@@ -133,8 +154,10 @@ public class chatsFragment extends Fragment {
                     String value = ds.getValue().toString().trim();
                     if(value.equals(PhNumber)){
                         addNewConversation(value,key,name);
+                        return;
                     }
                 }
+                Toast.makeText(getActivity(), "This number does not have ChatterBox installed.", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -161,6 +184,8 @@ public class chatsFragment extends Fragment {
                             while (numbers.moveToNext()) {
                                 num = numbers.getString(numbers.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                             }
+                            if(isGroup)
+                                name=groupName;
                             hasApp(num,name);
                         }
                     }
@@ -173,28 +198,51 @@ public class chatsFragment extends Fragment {
         rootRef.child("user-chats").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(uidFriend)){
+                if(dataSnapshot.hasChild(uidFriend) && (!isGroup)){
                     Toast.makeText(getActivity(), "This number has already been added.", Toast.LENGTH_SHORT).show();
-                    return;
                 }
                 else
                 {
                     Firebase chatId = rootRef.child("allChats").push();
-                    Firebase msgId = chatId.push();
 
-                    String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                    final chatHead ch = new chatHead();
 
-                    CBMessage msg = new CBMessage();
-                    msg.setMessageBody("Hi. You can now text me on ChatterBox.");
-                    msg.setMsgId(msgId.getKey());
-                    msg.setDate(currentDateTimeString.substring(0, 11));
-                    msg.setSenderId(uidFriend);
-                    msg.setTime(currentDateTimeString.substring(12, currentDateTimeString.length()));
+                    ch.setChatId(chatId.getKey());
+                    ch.setType("p2p");
+                    ch.setName(name);
+                    ch.setPhno(phno);
 
-                    msgId.setValue(msg);
-                    rootRef.child("user-chats").child(uid).child(uidFriend).child("chatId").setValue(chatId.getKey());
-                    rootRef.child("user-chats").child(uid).child(uidFriend).child("name").setValue(name);
-                    rootRef.child("user-chats").child(uid).child(uidFriend).child("phno").setValue(phno);
+                    if(isGroup){
+                        ch.setType("group");
+                        rootRef.child("participants").child(chatId.getKey()).push().setValue(uid);
+                        rootRef.child("participants").child(chatId.getKey()).push().setValue(uidFriend);
+                        rootRef.child("user-chats").child(uid).push().setValue(ch);
+                    }
+                    else
+                    {
+                        rootRef.child("user-chats").child(uid).child(uidFriend).setValue(ch);
+                    }
+
+                    rootRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            userName = dataSnapshot.child("name").getValue(String.class);
+                            String phnum = dataSnapshot.child("phno").getValue(String.class);
+                            ch.setName(userName);
+                            ch.setPhno(phnum);
+                            if(isGroup) {
+                                ch.setName(name);
+                                rootRef.child("user-chats").child(uidFriend).push().setValue(ch);
+                            }
+                            else{
+                                rootRef.child("user-chats").child(uidFriend).child(uid).setValue(ch);
+                            }
+                        }
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                        }
+                    });
+
                 }
             }
             @Override

@@ -5,6 +5,15 @@
     android:background="#f5f5f5"
     android:clickable="true">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Happy texting"
+        android:alpha="0.5"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:fontFamily="casual"/>
+
     <LinearLayout
         android:id="@+id/MainLayout"
         xmlns:android="http://schemas.android.com/apk/res/android"

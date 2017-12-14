@@ -9,6 +9,15 @@ public class chatHead {
     String chatId;
     String name;
     String phno;
+    String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -33,4 +42,5 @@ public class chatHead {
     public void setPhno(String phno) {
         this.phno = phno;
     }
+
 }

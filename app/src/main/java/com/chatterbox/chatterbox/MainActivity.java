@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
-    String uid;
     Fragment fragment = null;
     private Firebase rootRef = new Firebase("https://chatterbox-b475f.firebaseio.com/");
 
@@ -23,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-        uid = firebaseAuth.getInstance().getCurrentUser().getUid();
         if(firebaseAuth.getCurrentUser() == null){
             //Start login activity
             finish();
