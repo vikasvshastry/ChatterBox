@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -85,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 startActivity(new Intent(this, LogBeforeMainActivity.class));
                 break;
+            case R.id.action_add_part:
+                return false;
+            case R.id.action_view_part:
+                return false;
             default:
                 break;
         }

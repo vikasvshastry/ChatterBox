@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.client.DataSnapshot;
@@ -73,6 +75,8 @@ public class chatsFragment extends Fragment {
             protected void populateViewHolder(ChatsViewHolder chatsViewHolder, final chatHead c, int i) {
                 chatsViewHolder.name.setText(c.getName());
                 chatsViewHolder.phoneNo.setText(c.getPhno());
+                if(c.getType().equals("group"))
+                    chatsViewHolder.triangle.setBackgroundColor(Color.parseColor("#ef5350"));
 
                 chatsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -184,8 +188,6 @@ public class chatsFragment extends Fragment {
                             while (numbers.moveToNext()) {
                                 num = numbers.getString(numbers.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                             }
-                            if(isGroup)
-                                name=groupName;
                             hasApp(num,name);
                         }
                     }
@@ -203,7 +205,7 @@ public class chatsFragment extends Fragment {
                 }
                 else
                 {
-                    Firebase chatId = rootRef.child("allChats").push();
+                    final Firebase chatId = rootRef.child("allChats").push();
 
                     final chatHead ch = new chatHead();
 
@@ -213,9 +215,9 @@ public class chatsFragment extends Fragment {
                     ch.setPhno(phno);
 
                     if(isGroup){
+                        ch.setName(groupName);
                         ch.setType("group");
-                        rootRef.child("participants").child(chatId.getKey()).push().setValue(uid);
-                        rootRef.child("participants").child(chatId.getKey()).push().setValue(uidFriend);
+                        rootRef.child("participants").child(chatId.getKey()).child(uidFriend).setValue(name);
                         rootRef.child("user-chats").child(uid).push().setValue(ch);
                     }
                     else
@@ -231,8 +233,9 @@ public class chatsFragment extends Fragment {
                             ch.setName(userName);
                             ch.setPhno(phnum);
                             if(isGroup) {
-                                ch.setName(name);
+                                ch.setName(groupName);
                                 rootRef.child("user-chats").child(uidFriend).push().setValue(ch);
+                                rootRef.child("participants").child(chatId.getKey()).child(uid).setValue(userName);
                             }
                             else{
                                 rootRef.child("user-chats").child(uidFriend).child(uid).setValue(ch);
@@ -256,12 +259,14 @@ public class chatsFragment extends Fragment {
 
         TextView name,phoneNo;
         View mView;
+        ImageView triangle;
 
         public ChatsViewHolder(View v){
             super(v);
             this.mView = v;
             name = (TextView)v.findViewById(R.id.headingText);
             phoneNo = (TextView)v.findViewById(R.id.bodyText);
+            triangle = (ImageView)v.findViewById(R.id.sideBar);
         }
     }
 

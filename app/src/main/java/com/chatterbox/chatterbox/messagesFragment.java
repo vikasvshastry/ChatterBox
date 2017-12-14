@@ -1,7 +1,11 @@
 package com.chatterbox.chatterbox;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,14 +17,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -36,18 +43,17 @@ public class messagesFragment extends Fragment {
     LinearLayoutManager mLayoutManager;
     private Firebase rootRef = new Firebase("https://chatterbox-b475f.firebaseio.com/");
     FirebaseAuth firebaseAuth;
-
+    private final int REQUEST_CODE=99;
 
     public messagesFragment() {
         // Required empty public constructor
-        setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         uid = firebaseAuth.getInstance().getCurrentUser().getUid();
-
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -63,7 +69,6 @@ public class messagesFragment extends Fragment {
 
         if(name.isEmpty()) {
             name = phno;
-            setHasOptionsMenu(true);
         }
         ((MainActivity) getActivity()).setActionBarTitle(name);
 
@@ -217,15 +222,118 @@ public class messagesFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_part:
-
+                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE);
                 break;
             case R.id.action_view_part:
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.view_part_dialog);
+                final TextView textView = (TextView)dialog.findViewById(R.id.text);
+                final Button button = (Button)dialog.findViewById(R.id.button);
+                rootRef.child("participants").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String parts = "";
+                        for(DataSnapshot snap : dataSnapshot.getChildren()){
+                            parts = snap.getValue().toString().trim() + "\n\n" + parts;
+                        }
+                        textView.setText(parts);
+                        dialog.show();
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+                break;
+            case R.id.action_location:
 
                 break;
             default:
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        switch (reqCode) {
+            case (REQUEST_CODE):
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+                    Cursor c = getActivity().getContentResolver().query(contactData, null, null, null, null);
+                    if (c.moveToFirst()) {
+                        String contactId = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+                        String hasNumber = c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+                        String name1 = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                        String num = "";
+                        if (Integer.valueOf(hasNumber) == 1) {
+                            Cursor numbers = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+                            while (numbers.moveToNext()) {
+                                num = numbers.getString(numbers.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            }
+                            hasApp(num,name1);
+                        }
+                    }
+                    break;
+                }
+        }
+    }
+
+    private void hasApp(final String PhNumber, final String name1){
+        rootRef.child("registered").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    String key = ds.getKey();
+                    String value = ds.getValue().toString().trim();
+                    if(value.equals(PhNumber)){
+                        addNewConversation(value,key,name1);
+                        return;
+                    }
+                }
+                Toast.makeText(getActivity(), "This number does not have ChatterBox installed.", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    private void addNewConversation(final String phno, final String uidFriend, final String name1){
+        rootRef.child("participants").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(uidFriend)){
+                    Toast.makeText(getActivity(), "This number has already been added.", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    final chatHead ch = new chatHead();
+
+                    ch.setChatId(chatId);
+                    ch.setType("group");
+                    ch.setName(name);
+                    ch.setPhno(phno);
+
+                    rootRef.child("user-chats").child(uidFriend).push().setValue(ch);
+                    rootRef.child("participants").child(chatId).child(uidFriend).setValue(name1);
+                    Toast.makeText(getActivity(), "Successfully added", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
 }

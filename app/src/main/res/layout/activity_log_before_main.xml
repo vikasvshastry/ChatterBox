@@ -144,7 +144,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="ChatterBox"
-        android:fontFamily="casual"
+        android:fontFamily="cursive"
         android:textColor="#ffffff"
         android:textSize="45sp"
         android:layout_above="@id/footer"

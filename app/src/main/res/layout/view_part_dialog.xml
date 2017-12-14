@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="#ffffff"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/t"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="All members"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="#eeeeee"
+        android:background="@color/colorPrimary"/>
+
+    <ScrollView
+        android:layout_below="@+id/t"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="30dp"
+            android:padding="10dp"
+            android:layout_marginStart="15dp"
+            android:textSize="18sp"
+            android:textColor="#444444"/>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:text="okay"
+        android:textColor="#eeeeee"/>
+
+</RelativeLayout>
