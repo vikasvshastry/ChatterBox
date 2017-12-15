@@ -66,6 +66,60 @@ public class chatsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(mLayoutManager);
 
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.add_user_or_group);
+        final Button group = (Button)dialog.findViewById(R.id.group);
+        final Button person = (Button)dialog.findViewById(R.id.addNumber);
+
+        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                    }
+                }, 200);
+
+                isGroup=false;
+                dialog.show();
+                person.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, REQUEST_CODE);
+                    }
+                });
+                group.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        Toast.makeText(getActivity(), "Please choose one number to start with", Toast.LENGTH_SHORT).show();
+                        final Dialog dialog1 = new Dialog(getActivity());
+                        dialog1.setContentView(R.layout.create_group_dialog);
+                        final EditText groupname = (EditText)dialog1.findViewById(R.id.groupname);
+                        final Button select = (Button)dialog1.findViewById(R.id.select);
+                        dialog1.show();
+                        select.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
+                                isGroup=true;
+                                groupName = groupname.getText().toString().trim();
+                                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                                startActivityForResult(intent, REQUEST_CODE);
+                            }
+                        });
+
+                    }
+                });
+            }
+        });
+
         adapter = new FirebaseRecyclerAdapter<chatHead,ChatsViewHolder>(
                 chatHead.class,
                 R.layout.chat_head_layout,
@@ -104,52 +158,15 @@ public class chatsFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.add_user_or_group);
-        final Button group = (Button)dialog.findViewById(R.id.group);
-        final Button person = (Button)dialog.findViewById(R.id.addNumber);
-
-        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //scroll down when new comment posted
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
-            public void onClick(View v) {
-                isGroup=false;
-                dialog.show();
-                person.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, REQUEST_CODE);
-                    }
-                });
-                group.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        Toast.makeText(getActivity(), "Please choose one number to start with", Toast.LENGTH_SHORT).show();
-                        final Dialog dialog1 = new Dialog(getActivity());
-                        dialog1.setContentView(R.layout.create_group_dialog);
-                        final EditText groupname = (EditText)dialog1.findViewById(R.id.groupname);
-                        final Button select = (Button)dialog1.findViewById(R.id.select);
-                        dialog1.show();
-                        select.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog1.dismiss();
-                                isGroup=true;
-                                groupName = groupname.getText().toString().trim();
-                                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                                startActivityForResult(intent, REQUEST_CODE);
-                            }
-                        });
-
-                    }
-                });
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                recyclerView.scrollToPosition(positionStart);
             }
         });
+
+        recyclerView.setAdapter(adapter);
 
         return rootView;
     }
