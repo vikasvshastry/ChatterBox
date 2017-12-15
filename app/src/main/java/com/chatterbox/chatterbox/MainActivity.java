@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             case R.id.action_view_part:
                 return false;
+            case R.id.action_location:
+                return false;
+            case R.id.action_upload_file:
+                return false;
             default:
                 break;
         }

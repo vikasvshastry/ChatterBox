@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_location"
+        android:title="Share my location">
+    </item>
+
+    <item
+        android:id="@+id/action_upload_file"
+        android:title="Send file">
+    </item>
+
+</menu>
