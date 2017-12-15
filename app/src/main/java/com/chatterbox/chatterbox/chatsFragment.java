@@ -76,6 +76,8 @@ public class chatsFragment extends Fragment {
             protected void populateViewHolder(ChatsViewHolder chatsViewHolder, final chatHead c, int i) {
                 chatsViewHolder.name.setText(c.getName());
                 chatsViewHolder.phoneNo.setText(c.getPhno());
+                String temp = c.getName().charAt(0)+"";
+                chatsViewHolder.letter.setText(temp.toUpperCase());
                 if(c.getType().equals("group"))
                     chatsViewHolder.triangle.setBackgroundColor(Color.parseColor("#ef5350"));
 
@@ -260,7 +262,7 @@ public class chatsFragment extends Fragment {
 
     public static class ChatsViewHolder extends RecyclerView.ViewHolder{
 
-        TextView name,phoneNo;
+        TextView name,phoneNo,letter;
         View mView;
         ImageView triangle;
 
@@ -270,6 +272,7 @@ public class chatsFragment extends Fragment {
             name = (TextView)v.findViewById(R.id.headingText);
             phoneNo = (TextView)v.findViewById(R.id.bodyText);
             triangle = (ImageView)v.findViewById(R.id.sideBar);
+            letter = (TextView)v.findViewById(R.id.letter);
         }
     }
 

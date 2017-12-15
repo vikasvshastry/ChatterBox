@@ -581,7 +581,6 @@ public class messagesFragment extends Fragment{
             lattitude.trim();
             longitude.trim();
             link = "http://www.google.com/maps/place/"+lattitude+","+longitude;
-            Toast.makeText(getActivity(),link, Toast.LENGTH_SHORT).show();
             return link;
         }
         return link;
