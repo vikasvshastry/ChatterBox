@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_location"
-        android:title="Share my location">
+        android:id="@+id/action_upload_file"
+        android:title="Send file">
     </item>
 
     <item
-        android:id="@+id/action_upload_file"
-        android:title="Send file">
+        android:id="@+id/action_location"
+        android:title="Share my location">
     </item>
 
 </menu>

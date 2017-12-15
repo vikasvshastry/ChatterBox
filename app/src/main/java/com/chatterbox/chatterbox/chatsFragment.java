@@ -28,6 +28,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -100,6 +101,8 @@ public class chatsFragment extends Fragment {
         };
 
         recyclerView.setAdapter(adapter);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.add_user_or_group);

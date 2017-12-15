@@ -48,6 +48,7 @@ import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -113,6 +114,8 @@ public class messagesFragment extends Fragment{
 
         final ImageView sendButton = (ImageView)rootView.findViewById(R.id.sendComment);
         final EditText editTextCmt = (EditText)rootView.findViewById(R.id.commentText);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override

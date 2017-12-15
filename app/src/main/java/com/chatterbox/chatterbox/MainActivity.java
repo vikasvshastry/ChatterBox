@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().show();
         }catch (Exception e){}
 
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         displayView();
 
